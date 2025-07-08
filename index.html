@@ -28,9 +28,10 @@
         <div class="tradingview-widget-container" style="height:100%;width:100%">
             <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
             <script type="text/javascript">
-                // Get symbol from URL parameter
+                // Get symbol and timeframe from URL parameters
                 const urlParams = new URLSearchParams(window.location.search);
                 const symbol = urlParams.get('symbol') || 'BTCUSDT';
+                const timeframe = urlParams.get('timeframe') || '1D';
                 
                 // Create script element for TradingView widget
                 const script = document.createElement('script');
@@ -42,7 +43,7 @@
                 const config = {
                     "autosize": true,
                     "symbol": `BINANCE:${symbol}`,
-                    "interval": "D",
+                    "interval": timeframe,
                     "timezone": "Etc/UTC",
                     "theme": "dark",
                     "style": "1",

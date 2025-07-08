@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Create screenshots directory if it doesn't exist
-const screenshotsDir = join(__dirname, 'screenshots');
+const screenshotsDir = join(__dirname, "screenshots");
 if (!existsSync(screenshotsDir)) {
   mkdirSync(screenshotsDir, { recursive: true });
 }
@@ -23,9 +23,10 @@ app.use("/*", serveStatic({ root: "./" }));
 // Serve screenshots
 app.use("/screenshots/*", serveStatic({ root: "./" }));
 
-// Screenshot endpoint with optional symbol parameter
-app.get("/screenshot/:symbol?", async (c) => {
-  const symbol = c.req.param('symbol') || 'BTCUSDT';
+// Screenshot endpoint with optional symbol and timeframe parameters
+app.get("/screenshot/:symbol?/:timeframe?", async (c) => {
+  const symbol = c.req.param("symbol") || "BTCUSDT";
+  const timeframe = c.req.param("timeframe") || "1D";
   try {
     const browser = await puppeteer.launch({
       headless: "new",
@@ -35,22 +36,22 @@ app.get("/screenshot/:symbol?", async (c) => {
         "--disable-dev-shm-usage",
         "--disable-accelerated-2d-canvas",
         "--disable-gpu",
-        "--window-size=1920,1080",
+        "--window-size=1280,720",
         "--disable-features=VizDisplayCompositor",
       ],
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
     });
 
     const page = await browser.newPage();
-    await page.setViewport({ width: 1920, height: 1080 });
+    await page.setViewport({ width: 1280, height: 720 });
 
     // Generate unique filename
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filename = `tradingview-chart-${symbol}-${timestamp}.png`;
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const filename = `tradingview-chart-${symbol}-${timeframe}-${timestamp}.png`;
     const filepath = join(screenshotsDir, filename);
-    
-    // Navigate to the chart page with symbol parameter
-    const url = `http://localhost:3000?symbol=${encodeURIComponent(symbol)}`;
+
+    // Navigate to the chart page with symbol and timeframe parameters
+    const url = `http://localhost:3000?symbol=${encodeURIComponent(symbol)}&timeframe=${encodeURIComponent(timeframe)}`;
     await page.goto(url, { waitUntil: "networkidle2" });
 
     // Wait for TradingView widget to load
@@ -66,7 +67,7 @@ app.get("/screenshot/:symbol?", async (c) => {
     );
 
     // Wait for chart to fully render
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 4000));
 
     // Take screenshot
     const screenshot = await page.screenshot({
@@ -78,14 +79,15 @@ app.get("/screenshot/:symbol?", async (c) => {
 
     // Save screenshot to file
     writeFileSync(filepath, screenshot);
-    
+
     // Return the filename in response
-    return c.json({ 
-      success: true, 
+    return c.json({
+      success: true,
       symbol: symbol,
+      timeframe: timeframe,
       filename: filename,
       path: `/screenshots/${filename}`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error("Screenshot error:", error);
