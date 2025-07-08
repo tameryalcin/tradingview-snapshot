@@ -21,6 +21,7 @@ services:
       - traefik.http.services.tradingview-snapshot-websecure.loadbalancer.server.port=3000
       - traefik.http.routers.tradingview-snapshot-websecure.service=tradingview-snapshot-websecure
       - traefik.http.routers.tradingview-snapshot-websecure.tls.certresolver=letsencrypt
+      - traefik.http.routers.tradingview-snapshot-websecure.tls=true
       - traefik.enable=true
 
 networks:
