@@ -1,0 +1,16 @@
+{
+  "name": "tradingview-snapshot",
+  "version": "1.0.0",
+  "description": "TradingView chart screenshot service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "hono": "^4.6.3",
+    "@hono/node-server": "^1.12.2",
+    "puppeteer": "^23.5.0"
+  },
+  "type": "module"
+}
