@@ -11,11 +11,17 @@ services:
     networks:
       - dokploy-network
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.tradingview-snapshot.rule=Host(`tview.dp.tamer.im`)"
-      - "traefik.http.routers.tradingview-snapshot.entrypoints=websecure"
-      - "traefik.http.routers.tradingview-snapshot.tls.certResolver=letsencrypt"
-      - "traefik.http.services.tradingview-snapshot.loadbalancer.server.port=3000"
+      - traefik.http.routers.tradingview-snapshot-web.rule=Host(`tview.dp.tamer.im`)
+      - traefik.http.routers.tradingview-snapshot-web.entrypoints=web
+      - traefik.http.services.tradingview-snapshot-web.loadbalancer.server.port=3000
+      - traefik.http.routers.tradingview-snapshot-web.service=tradingview-snapshot-web
+      - traefik.http.routers.tradingview-snapshot-web.middlewares=redirect-to-https@file
+      - traefik.http.routers.tradingview-snapshot-websecure.rule=Host(`tview.dp.tamer.im`)
+      - traefik.http.routers.tradingview-snapshot-websecure.entrypoints=websecure
+      - traefik.http.services.tradingview-snapshot-websecure.loadbalancer.server.port=3000
+      - traefik.http.routers.tradingview-snapshot-websecure.service=tradingview-snapshot-websecure
+      - traefik.http.routers.tradingview-snapshot-websecure.tls.certresolver=letsencrypt
+      - traefik.enable=true
 
 networks:
   dokploy-network:
