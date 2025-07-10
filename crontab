@@ -1,0 +1,2 @@
+# Run cleanup script every hour
+0 * * * * cd /app && node cleanup.js >> /var/log/cleanup.log 2>&1
